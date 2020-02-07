@@ -41,6 +41,7 @@ class _LoginState extends State<_Login>{
           await repo.login(idToken);
           Navigator.of(context).pop('');
         } on Exception catch (e){
+          //display exception or something
           setState(() {
             _isLoading = false;
           });

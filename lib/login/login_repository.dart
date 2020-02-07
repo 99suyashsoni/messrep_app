@@ -46,8 +46,6 @@ class LoginRepository {
     await _prefs.setString(PrefKeys.userId, userJson['id']);
     await _prefs.setString(PrefKeys.userName, userJson['name']);
     await _prefs.setString(PrefKeys.userRoom, userJson['room']);
-    await _prefs.setString(PrefKeys.qrCode, userJson['qr_code']);
-    await _prefs.setString(PrefKeys.bitsId, userJson['bits_id']);
 
     _client.headers.addAll({'Authorization': userJson['JWT']});
   }
