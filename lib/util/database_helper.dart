@@ -17,7 +17,7 @@ Future<Database> databaseInstance(String dbName) async {
         CREATE TABLE Issues(
           id  INTEGER PRIMARY KEY,
           title TEXT NOT NULL,
-          upvotedCount INTEGER NOT NULL,
+          upvoteCount INTEGER NOT NULL,
         )
       ''');
     });
