@@ -1,6 +1,44 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-void main() => runApp(MessRepApp());
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:messrep_app/login/login_repository.dart';
+import 'package:messrep_app/util/network_client.dart';
+import 'package:messrep_app/util/pref_keys.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runZoned(() async {
+    final prefs = await SharedPreferences.getInstance();
+    final client = NetworkClient(
+      baseUrl: 'http://142.93.213.45/api',
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    final loginRepository = LoginRepository(
+      preferences: prefs,
+      client: client,
+    );
+    
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Color(0xFF5A534A)
+      )
+    );
+
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    if(prefs.containsKey(PrefKeys.jwt)){
+      client.headers.addAll({'Authorization': prefs.getString(PrefKeys.jwt)});
+      runApp(MessRepApp());
+    }else {
+      runApp(MessRepApp());
+    }
+    
+  });
+}
 
 class MessRepApp extends StatelessWidget {
   // This widget is the root of your application.
