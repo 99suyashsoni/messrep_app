@@ -33,7 +33,11 @@ class LoginRepository {
     final res = await _client.post('/login', body: body);
 
     if (res.statusCode != 200) {
-      //handle exception
+      try {
+        throw Exception(jsonDecode(res.body)['message']);
+      } on Exception {
+        throw Exception('${res.statusCode} error');
+      }
     }
 
     final userJson = jsonDecode(res.body);
