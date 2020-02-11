@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:messrep_app/login/login_repository.dart';
 import 'package:messrep_app/util/network_client.dart';
-import 'package:messrep_app/util/pref_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -30,8 +29,8 @@ void main() async {
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    if(prefs.containsKey(PrefKeys.jwt)){
-      client.headers.addAll({'Authorization': prefs.getString(PrefKeys.jwt)});
+    if(prefs.containsKey('JWT')){
+      client.headers.addAll({'Authorization': prefs.getString('JWT')});
       runApp(MessRepApp());
     }else {
       runApp(MessRepApp());

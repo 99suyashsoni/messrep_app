@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:messrep_app/util/network_client.dart';
-import 'package:messrep_app/util/pref_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginRepository {
@@ -30,7 +29,7 @@ class LoginRepository {
       'id_token': idToken,
     });
 
-    final res = await _client.post('/login', body: body);
+    final res = await _client.post('/login_gc', body: body);
 
     if (res.statusCode != 200) {
       try {
@@ -42,11 +41,7 @@ class LoginRepository {
 
     final userJson = jsonDecode(res.body);
 
-    await _prefs.setString(PrefKeys.jwt, userJson['JWT']);
-    await _prefs.setString(PrefKeys.userId, userJson['id']);
-    await _prefs.setString(PrefKeys.userName, userJson['name']);
-    await _prefs.setString(PrefKeys.userRoom, userJson['room']);
-
+    await _prefs.setString('JWT', userJson['JWT']);
     _client.headers.addAll({'Authorization': userJson['JWT']});
   }
 }

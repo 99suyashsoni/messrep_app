@@ -25,7 +25,13 @@ class IssuesRepository {
   Future<void> refresh() async {
     final response = await _client.get('/issues');
 
-    if (response.statusCode != 200) {}
+    if (response.statusCode != 200) {
+      try {
+        throw Exception(jsonDecode(response.body)['message']);
+      } on Exception {
+        throw Exception('${response.statusCode} error');
+      }
+    }
 
     final issuesJson = jsonDecode(response.body);
     final activeIssuesJson = issuesJson['active'];
@@ -67,6 +73,20 @@ class IssuesRepository {
         title: row['title'],
         upVoteCount: row['upvoteCount'],
       ));
+    }
+  }
+
+  Future<void> resolveIssue(int issueId, String reason) async {
+    final body = {'issue_id': issueId, 'reason': reason};
+
+    final response = await _client.post('/issues/close', body: jsonEncode(body));
+
+    if(response.statusCode != 200){
+      try {
+        throw Exception(jsonDecode(response.body)['message']);
+      } on Exception {
+        throw Exception('${response.statusCode} error');
+      }
     }
   }
 }
