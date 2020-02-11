@@ -28,25 +28,28 @@ class _LoginState extends State<_Login>{
       return Center(child: CircularProgressIndicator());
     }
 
-    return RaisedButton(
-      child: Text('Login'),
-      elevation: 2.0,
-      onPressed: () async {
-        final repo = Provider.of<LoginRepository>(context);
-        try{
-          final idToken = await repo.signInWithGoogle();
-          setState(() {
-            _isLoading = true;
-          });
-          await repo.login(idToken);
-          Navigator.of(context).pop('');
-        } on Exception catch (e){
-          //display exception or something
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      },
+    return Align(
+      alignment: Alignment.center,
+      child: RaisedButton(
+        child: Text('Login'),
+        elevation: 2.0,
+        onPressed: () async {
+          final repo = Provider.of<LoginRepository>(context);
+          try{
+            final idToken = await repo.signInWithGoogle();
+            setState(() {
+              _isLoading = true;
+            });
+            await repo.login(idToken);
+            Navigator.of(context).pop();
+          } on Exception catch (e){
+            print(e.toString());
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        },
+      ),
     );
   }
 }
