@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:messrep_app/issues/issue_notifier.dart';
 import 'package:provider/provider.dart';
@@ -10,10 +9,22 @@ class IssueScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: _Issues(),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFE8DECC),
+            Color(0xFFE1DAD4),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: _Issues(),
+        ),
       ),
     );
   }
@@ -25,7 +36,6 @@ class _Issues extends StatefulWidget {
 }
 
 class _IssuesState extends State<_Issues> {
-
   String _reason;
 
   @override
@@ -42,62 +52,117 @@ class _IssuesState extends State<_Issues> {
           return Center(child: Text(state.error));
         }
         if (state is Success) {
-          return ListView.separated(
-            padding: const EdgeInsets.all(12.0),
-            itemCount: state.issues.length,
-            separatorBuilder: (_, i) => SizedBox(height: 12.0),
-            itemBuilder: (context, position) {
-              return Card(
-                elevation: 2.0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(child: Text(state.issues[position].title)),
-                          Icon(Icons.arrow_upward),
-                          Text(state.issues[position].upVoteCount.toString()),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16.0
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              maxLines: 3,
-                              maxLength: 70,
-                              onChanged: (reason) {
-                                setState(() {
-                                  _reason = reason;
-                                });
-                              },
+          return RefreshIndicator(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(12.0),
+                    itemCount: state.issues.length,
+                    separatorBuilder: (_, i) => SizedBox(height: 12.0),
+                    itemBuilder: (context, position) {
+                      return GestureDetector(
+                        child: Card(
+                          elevation: 2.0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child: Text(state.issues[position].title)),
+                                Icon(Icons.arrow_upward),
+                                Text(state.issues[position].upVoteCount
+                                    .toString()),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            width: 12.0
-                          ),
-                          RaisedButton(
-                            child: Text('Close'),
-                            onPressed: () async {
-                              await issues.closeIssue(state.issues[position].id, _reason);
-                              _reason = null;
+                        ),
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (_) {
+                              return Container(
+                                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Reason:'),
+                                        SizedBox(width: 20.0),
+                                        Expanded(
+                                          child: TextField(
+                                              maxLines: 3,
+                                              maxLength: 70,
+                                              onChanged: (reason) {
+                                                setState(() {
+                                                  _reason = reason;
+                                                });
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                    RaisedButton(
+                                      child: Text('Close issue'),
+                                      textColor: Color(0xFF6B6154),
+                                      color: Color(0xFFFFE0A4),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0)),
+                                      onPressed: () async {
+                                        await issues.closeIssue(
+                                            state.issues[position].id, _reason);
+                                        _reason = null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
                             },
-                          ),
-                        ],
-                      ),
-                    ],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(8.0),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
-              );
+                SizedBox(
+                  height: 20.0
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: RaisedButton(
+                    child: Text('Logout'),
+                    textColor: Color(0xFF6B6154),
+                    color: Color(0xFFFFE0A4),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0)),
+                    onPressed: () {
+                      print('logout');
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0
+                ),
+              ],
+            ),
+            onRefresh: () async {
+              try {
+                await issues.refresh();
+              } on Exception catch (e) {
+                print(e.toString());
+              }
             },
           );
         }

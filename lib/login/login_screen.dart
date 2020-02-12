@@ -5,9 +5,28 @@ import 'package:provider/provider.dart';
 class LoginScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: _Login(),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFF49B65),
+            Color(0xFFD9492D),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+              color: Color(0x6EDD5435),
+              offset: Offset(3.0, 8.0),
+              blurRadius: 10.0),
+        ],
+      ),
+      child: Scaffold(
+        body: SafeArea(
+          child: _Login(),
+        ),
       ),
     );
   }

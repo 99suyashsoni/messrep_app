@@ -41,6 +41,11 @@ class IssueNotifier extends ChangeNotifier{
     }
   }
 
+  Future<void> refresh() async {
+    await _repo.refresh();
+    await getIssues();
+  }
+
   Future<void> closeIssue(int issueId, String reason) async {
     _state = Loading();
     notifyListeners();
