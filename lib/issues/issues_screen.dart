@@ -49,7 +49,12 @@ class _IssuesState extends State<_Issues> {
           return Center(child: CircularProgressIndicator());
         }
         if (state is Failure) {
-          return Center(child: Text(state.error));
+          return RefreshIndicator(
+            child: Center(child: Text(state.error)),
+            onRefresh: () async {
+              await issues.refresh();
+            },
+          );
         }
         if (state is Success) {
           return RefreshIndicator(

@@ -71,18 +71,6 @@ class MessRepApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Mess Rep App',
-      theme: ThemeData(
-        accentColor: Color(0xFF766B6B),
-        appBarTheme: AppBarTheme(color: Colors.white, elevation: 0.0),
-        fontFamily: 'Quicksand',
-        textTheme: TextTheme(
-          title: TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-        ),
-      ),
       initialRoute: initialRoute,
       routes: {
         '/': (context) {
