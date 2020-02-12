@@ -121,9 +121,18 @@ class _IssuesState extends State<_Issues> {
                                           borderRadius:
                                               BorderRadius.circular(8.0)),
                                       onPressed: () async {
-                                        await issues.closeIssue(
-                                            state.issues[position].id, _reason);
-                                        _reason = null;
+                                        if (_reason != null) {
+                                          await issues.closeIssue(
+                                              state.issues[position].id,
+                                              _reason);
+                                          _reason = null;
+                                        } else {
+                                          Scaffold.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content:
+                                                Text('Please enter reason'),
+                                          ));
+                                        }
                                       },
                                     ),
                                   ],

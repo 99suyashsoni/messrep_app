@@ -78,7 +78,11 @@ class _LoginState extends State<_Login> {
                 await repo.login(idToken);
                 Navigator.of(context).pop();
               } on Exception catch (e) {
-                print(e.toString());
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    e.toString(),
+                  ),
+                ));
                 setState(() {
                   _isLoading = false;
                 });
