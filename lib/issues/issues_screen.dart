@@ -37,6 +37,7 @@ class _Issues extends StatefulWidget {
 
 class _IssuesState extends State<_Issues> {
   String _reason;
+  String _error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,13 @@ class _IssuesState extends State<_Issues> {
           return RefreshIndicator(
             child: Center(child: Text(state.error)),
             onRefresh: () async {
-              await issues.refresh();
+              try {
+                await issues.refresh();
+              } on Exception catch (e) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(e.toString()),
+                ));
+              }
             },
           );
         }
@@ -88,13 +95,17 @@ class _IssuesState extends State<_Issues> {
                           ),
                         ),
                         onTap: () {
+                          setState(() {
+                            _error = '';
+                          });
                           showModalBottomSheet(
                             context: context,
                             builder: (_) {
                               return Container(
                                 padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                child: Column(
+                                child: ListView(
                                   children: [
+                                    SizedBox(height: 20.0),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -113,28 +124,57 @@ class _IssuesState extends State<_Issues> {
                                         ),
                                       ],
                                     ),
-                                    RaisedButton(
-                                      child: Text('Close issue'),
-                                      textColor: Color(0xFF6B6154),
-                                      color: Color(0xFFFFE0A4),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0)),
-                                      onPressed: () async {
-                                        if (_reason != null) {
-                                          await issues.closeIssue(
-                                              state.issues[position].id,
-                                              _reason);
-                                          _reason = null;
-                                        } else {
-                                          Scaffold.of(context)
-                                              .showSnackBar(SnackBar(
-                                            content:
-                                                Text('Please enter reason'),
-                                          ));
-                                        }
-                                      },
+                                    SizedBox(height: 20.0),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        RaisedButton(
+                                          child: Text('Close issue'),
+                                          textColor: Color(0xFF6B6154),
+                                          color: Color(0xFFFFE0A4),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0)),
+                                          onPressed: () async {
+                                            if (_reason != null) {
+                                              await issues.closeIssue(
+                                                  state.issues[position].id,
+                                                  _reason);
+                                              _reason = null;
+                                              _error = '';
+                                            } else {
+                                              setState(() {
+                                                _error = 'Please enter a reason';
+                                              });
+//                                              Scaffold.of(context)
+//                                                  .showSnackBar(SnackBar(
+//                                                content:
+//                                                    Text('Please enter reason'),
+//                                              ));
+                                            }
+                                          },
+                                        ),
+                                      ],
                                     ),
+                                    SizedBox(height: 20.0),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          _error,
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 20.0),
                                   ],
                                 ),
                               );
@@ -175,7 +215,9 @@ class _IssuesState extends State<_Issues> {
               try {
                 await issues.refresh();
               } on Exception catch (e) {
-                print(e.toString());
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(e.toString()),
+                ));
               }
             },
           );
