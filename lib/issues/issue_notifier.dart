@@ -31,20 +31,20 @@ class IssueNotifier extends ChangeNotifier{
 
   UiState get state => _state;
 
-  void getIssues() {
-    _repo.issues.then((issues) {
-      _state = Success(issues);
+  Future<void> getIssues() async {
+    try {
+      _state = Success(await _repo.issues);
+    } on Exception catch (e) {
+      _state = Failure(e.toString());
+    } finally {
       notifyListeners();
-    }).catchError((error) {
-      _state = Failure(error.toString());
-      notifyListeners();
-    });
+    }
   }
 
   Future<void> closeIssue(int issueId, String reason) async {
     _state = Loading();
     notifyListeners();
     await _repo.resolveIssue(issueId, reason);
-    getIssues();
+    await getIssues();
   }
 }

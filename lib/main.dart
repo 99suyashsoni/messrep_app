@@ -28,13 +28,12 @@ void main() async {
     );
 
     final issuesRepository = IssuesRepository(
-      database: database, client: client,);
+      database: database,
+      client: client,
+    );
 
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-            statusBarColor: Color(0xFF5A534A)
-        )
-    );
+        SystemUiOverlayStyle(statusBarColor: Color(0xFF5A534A)));
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -56,13 +55,12 @@ void main() async {
 }
 
 class MessRepApp extends StatelessWidget {
-
-  const MessRepApp({
-    @required this.initialRoute,
-    @required this.loginRepository,
-    @required this.issuesRepository,
-    Key key
-  }) : super(key: key);
+  const MessRepApp(
+      {@required this.initialRoute,
+      @required this.loginRepository,
+      @required this.issuesRepository,
+      Key key})
+      : super(key: key);
 
   final String initialRoute;
   final LoginRepository loginRepository;
