@@ -141,9 +141,7 @@ class _IssuesState extends State<_Issues> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 20.0
-                ),
+                SizedBox(height: 20.0),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: RaisedButton(
@@ -152,14 +150,16 @@ class _IssuesState extends State<_Issues> {
                     color: Color(0xFFFFE0A4),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0)),
-                    onPressed: () {
-                      print('logout');
+                    onPressed: () async {
+                      await issues.logout();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/login',
+                        ModalRoute.withName('/'),
+                      );
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 20.0
-                ),
+                SizedBox(height: 20.0),
               ],
             ),
             onRefresh: () async {

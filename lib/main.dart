@@ -30,6 +30,7 @@ void main() async {
     final issuesRepository = IssuesRepository(
       database: database,
       client: client,
+      preferences: prefs
     );
 
     SystemChrome.setSystemUIOverlayStyle(

@@ -52,4 +52,8 @@ class IssueNotifier extends ChangeNotifier{
     await _repo.resolveIssue(issueId, reason);
     await getIssues();
   }
+
+  Future<void> logout() async {
+    await _repo.logout();
+  }
 }

@@ -3,17 +3,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:messrep_app/issues/issue.dart';
 import 'package:messrep_app/util/network_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class IssuesRepository {
   IssuesRepository({
     @required Database database,
     @required NetworkClient client,
-  })  : this._db = database,
-        this._client = client;
+    @required SharedPreferences preferences,
+  })
+      : this._db = database,
+        this._client = client,
+        this._prefs = preferences;
 
   final Database _db;
   final NetworkClient _client;
+  final SharedPreferences _prefs;
   List<Issue> _issues = [];
 
   Future<List<Issue>> get issues async {
@@ -79,14 +84,19 @@ class IssuesRepository {
   Future<void> resolveIssue(int issueId, String reason) async {
     final body = {'issue_id': issueId, 'reason': reason};
 
-    final response = await _client.post('/issues/close', body: jsonEncode(body));
+    final response = await _client.post(
+        '/issues/close', body: jsonEncode(body));
 
-    if(response.statusCode != 200){
+    if (response.statusCode != 200) {
       try {
         throw Exception(jsonDecode(response.body)['message']);
       } on Exception {
         throw Exception('${response.statusCode} error');
       }
     }
+  }
+
+  Future<void> logout() async {
+    await _prefs.clear();
   }
 }
